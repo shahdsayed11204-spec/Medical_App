@@ -18,14 +18,14 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 200), () {
       setState(() => animate = true);
     });
     checkLogin();
   }
 
   Future<void> checkLogin() async {
-    await Future.delayed(const Duration(seconds: 4));
+    await Future.delayed(const Duration(seconds: 2));
    navigatorTo(context, OnboardingView());
   }
 

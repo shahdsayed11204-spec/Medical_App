@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:medicalapp/feature/root/root_view.dart';
 
 import '../../../../core/constant/app_colors.dart';
 import '../../../../core/shared/custom_text/coustom_taxt.dart';
@@ -81,10 +82,8 @@ class _FillProfileViewState extends State<FillProfileView> {
     showCongratsDialog(
       context,
       onDone: () {
-        navigatorendfini(
-          context,
-          const Scaffold(body: Center(child: Text('Home'))),
-        );
+        navigatorendfini(context, RootView());
+
       },
     );
   }
@@ -225,6 +224,8 @@ class _FillProfileViewState extends State<FillProfileView> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
               child: CustomButton(
+
+                radius: 39,
                 text: 'Save',
                 width: double.infinity,
                 onTap: _save,
