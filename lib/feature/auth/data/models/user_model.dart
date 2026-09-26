@@ -4,6 +4,9 @@ class UserModel {
   final String email;
   final String phone;
   final String photoUrl;
+  final String nickname;
+  final String dateOfBirth;
+  final String gender;
 
   UserModel({
     required this.id,
@@ -11,6 +14,9 @@ class UserModel {
     required this.email,
     this.phone = '',
     this.photoUrl = '',
+    this.nickname = '',
+    this.dateOfBirth = '',
+    this.gender = '',
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +26,9 @@ class UserModel {
       email: json['email'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
       photoUrl: json['photoUrl'] as String? ?? '',
+      nickname: json['nickname'] as String? ?? '',
+      dateOfBirth: json['dateOfBirth'] as String? ?? '',
+      gender: json['gender'] as String? ?? '',
     );
   }
 
@@ -30,6 +39,9 @@ class UserModel {
       'email': email,
       'phone': phone,
       'photoUrl': photoUrl,
+      'nickname': nickname,
+      'dateOfBirth': dateOfBirth,
+      'gender': gender,
     };
   }
 }

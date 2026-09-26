@@ -17,7 +17,13 @@ abstract class AuthRemoteDatasource {
   Future<UserModel> loginWithGoogle();
   Future<UserModel> getCurrentUser();
   Future<void> logout();
-  Future<void> updateProfile({required String name, String? phone});
+  Future<void> updateProfile({
+    required String name,
+    String? phone,
+    String? nickname,
+    String? dateOfBirth,
+    String? gender,
+  });
   Future<void> changePassword({required String currentPassword, required String newPassword});
   Future<String> uploadProfilePhoto(File file);
 }
@@ -110,6 +116,9 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
     final firestoreEmail = doc.data()?['email'] as String?;
     final firestorePhone = doc.data()?['phone'] as String?;
     final firestorePhotoUrl = doc.data()?['photoUrl'] as String?;
+    final firestoreNickname = doc.data()?['nickname'] as String?;
+    final firestoreDob = doc.data()?['dateOfBirth'] as String?;
+    final firestoreGender = doc.data()?['gender'] as String?;
 
     final resolvedName = (firestoreName != null && firestoreName.trim().isNotEmpty)
         ? firestoreName.trim()
@@ -134,6 +143,9 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
       email: resolvedEmail,
       phone: firestorePhone ?? '',
       photoUrl: resolvedPhotoUrl,
+      nickname: firestoreNickname ?? '',
+      dateOfBirth: firestoreDob ?? '',
+      gender: firestoreGender ?? '',
     );
   }
 
@@ -147,7 +159,13 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   }
 
   @override
-  Future<void> updateProfile({required String name, String? phone}) async {
+  Future<void> updateProfile({
+    required String name,
+    String? phone,
+    String? nickname,
+    String? dateOfBirth,
+    String? gender,
+  }) async {
     final currentUser = auth.currentUser;
     if (currentUser == null) {
       throw Exception('لا يوجد مستخدم مسجل دخول حاليًا');
@@ -158,6 +176,9 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
 
     final data = <String, dynamic>{'name': trimmedName};
     if (phone != null) data['phone'] = phone.trim();
+    if (nickname != null) data['nickname'] = nickname.trim();
+    if (dateOfBirth != null) data['dateOfBirth'] = dateOfBirth.trim();
+    if (gender != null) data['gender'] = gender.trim();
 
     await fireStore.collection('users').doc(currentUser.uid).set(data, SetOptions(merge: true));
   }

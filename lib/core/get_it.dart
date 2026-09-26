@@ -15,6 +15,7 @@ import '../feature/auth/domain/use_case/register_use_case.dart';
 import '../feature/auth/domain/use_case/update_profile_usecase.dart';
 import '../feature/auth/domain/use_case/upload_profile_photo_usecase.dart';
 import '../feature/auth/presention/cubit/auth_cubit.dart';
+import '../feature/auth/presention/cubit/profile_cubit.dart';
 
 final getIt= GetIt.instance;
 
@@ -50,7 +51,5 @@ Future<void>setup()async{
 
   getIt.registerFactory(() => AuthCubit(getIt(), getIt(), getIt()));
 
-  // getIt.registerFactory(
-  //       () => ProfileCubit(getIt(), getIt(), getIt(), getIt(), getIt()),
-  // );
+  getIt.registerFactory(() => ProfileCubit(getIt()));
 }
