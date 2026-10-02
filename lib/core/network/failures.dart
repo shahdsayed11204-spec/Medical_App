@@ -1,28 +1,38 @@
 import 'package:equatable/equatable.dart';
-abstract class Failures extends Equatable{
+
+/// `message` is now an error CODE (e.g. 'network', 'user-not-found').
+/// The UI translates it with `context.errorText(message)`.
+abstract class Failures extends Equatable {
   final String message;
-  Failures({required this.message});
-  List<Object> get props =>[message];
+  const Failures({required this.message});
+
+  @override
+  List<Object> get props => [message];
 }
 
 class ServerFailure extends Failures {
-  final int ? statusCode;
-  ServerFailure({required super.message, this.statusCode});
+  final int? statusCode;
+  const ServerFailure({required super.message, this.statusCode});
 }
 
-class NetworkFailure extends Failures{
-  NetworkFailure():super(message: 'Check your internet connection');
+class NetworkFailure extends Failures {
+  const NetworkFailure() : super(message: 'network');
 }
+
 class UnauthorizedFailure extends Failures {
-  UnauthorizedFailure(): super(message: "Token , Session End , Try to Login again") ;
+  const UnauthorizedFailure() : super(message: 'unauthorized');
 }
 
 class NotFoundFailure extends Failures {
-  NotFoundFailure(): super(message: "Not Found") ;
+  const NotFoundFailure() : super(message: 'not-found');
 }
+
 class UnExpectedFailure extends Failures {
-  UnExpectedFailure(): super(message: "UnExpectedFailure") ;
+  const UnExpectedFailure() : super(message: 'unexpected');
 }
+
 class AuthFailure extends Failures {
-  AuthFailure({required String message}): super(message: message) ;
+  const AuthFailure({required super.message});
 }
+
+String cleanError(Object e) => e.toString().replaceFirst('Exception: ', '');

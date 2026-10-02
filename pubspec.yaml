@@ -8,11 +8,12 @@ environment:
   sdk: ^3.13.2
 
 dependencies:
+
   flutter:
     sdk: flutter
-
+  intl: any
+  firebase_storage: ^13.0.0
   cupertino_icons: ^1.0.8
-  firebase_storage: ^13.5.0
   cloud_firestore: ^6.5.0
   firebase_core: ^4.10.0
   firebase_auth: ^6.5.2
@@ -31,6 +32,8 @@ dependencies:
   carousel_slider: ^5.1.1
   image_picker: ^1.2.3
   easy_localization: ^3.0.7
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
 
 dev_dependencies:
   flutter_test:
@@ -40,12 +43,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
+
 
   assets:
     - assets/Images/
-    - assets/translations/
 
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/Images/Vector.png"
+

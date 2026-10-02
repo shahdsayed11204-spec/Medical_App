@@ -12,11 +12,12 @@ import '../../../../core/shared/custom_text/coustom_taxt.dart';
 import '../../../../core/shared/custom_text/custom_bottom.dart';
 import '../../../../core/shared/custom_text/custom_snackbar.dart';
 import '../../../../core/shared/navigator/navigator_replace.dart';
-import '../../../root/root_view.dart';
+
+import '../../../local/l10n_ext.dart';
+import '../../../root/view/root_view.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import 'create_account_view.dart';
-
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -26,20 +27,9 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-
-  var formKey = GlobalKey<FormState>();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  bool isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    formKey = GlobalKey<FormState>();
-    emailController = TextEditingController();
-    passwordController = TextEditingController();
-
-  }
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   void dispose() {
@@ -48,34 +38,19 @@ class _LoginViewState extends State<LoginView> {
     super.dispose();
   }
 
-
-
-  InputDecoration  decoration({
-    required String hint,
-    required IconData icon,
-    Widget? suffix,
-  }) {
-    OutlineInputBorder border(Color c) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: c),
-    );
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: const TextStyle(color: AppColors.hintGrey, fontSize: 14),
-      prefixIcon: Icon(icon, color: AppColors.hintGrey, size: 20),
-      suffixIcon: suffix,
-      filled: true,
-      fillColor: AppColors.fieldFill,
-      contentPadding: const EdgeInsets.symmetric(vertical: 16),
-      enabledBorder: border(AppColors.fieldBorder),
-      focusedBorder: border(AppColors.secondaryColor),
-      errorBorder: border(Colors.redAccent),
-      focusedErrorBorder: border(Colors.redAccent),
-    );
+  void _submit(BuildContext context) {
+    if (formKey.currentState!.validate()) {
+      context.read<AuthCubit>().login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+
     return BlocProvider(
       create: (context) => getIt<AuthCubit>(),
       child: GestureDetector(
@@ -83,27 +58,31 @@ class _LoginViewState extends State<LoginView> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           backgroundColor: Colors.white,
-          body: BlocConsumer<AuthCubit,AuthState>(
-            listener: ( context,  state) {
+          body: BlocConsumer<AuthCubit, AuthState>(
+            listener: (context, state) {
               if (state is SuccessState) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(customSnack(errorMsg: 'Success',color: Colors.green,icon: Icons.done));
-                navigatorReplace(context,  RootView());
-              }
-
-              if (state is ErrorState){
                 ScaffoldMessenger.of(context).showSnackBar(
-                    customSnack(errorMsg: state.message)
+                  customSnack(
+                    errorMsg: t.success,
+                    color: Colors.green,
+                    icon: Icons.done,
+                  ),
+                );
+                navigatorReplace(context, RootView());
+              }
+              if (state is ErrorState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  customSnack(errorMsg: context.errorText(state.message)),
                 );
               }
               if (state is LoadingState) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    customSnack(errorMsg: 'Loading...' ,color: Colors.amber,)
+                  customSnack(errorMsg: t.loading, color: Colors.amber),
                 );
               }
             },
-            builder: ( context,  state) {
+            builder: (context, state) {
+              final isLoading = state is LoadingState;
               return SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -123,7 +102,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const Gap(8),
                         Text.rich(
-                          TextSpan        (
+                          TextSpan(
                             children: [
                               TextSpan(
                                 text: 'Health',
@@ -146,60 +125,52 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const Gap(25),
                         CustomText(
-                          text: 'Hi, Welcome Back!',
+                          text: t.loginTitle,
                           size: 18,
                           font: FontWeight.w700,
                           color: AppColors.titleColor,
                         ),
                         const Gap(8),
                         CustomText(
-                          text: "Hope you're doing fine.",
+                          text: t.loginSubtitle,
                           size: 12,
                           color: AppColors.hintGrey,
                         ),
                         const Gap(25),
-
                         CustomTextFormField(
                           controller: emailController,
-                          hint: 'Your Email',
+                          hint: t.yourEmail,
                           icon: Icons.mail_outline_rounded,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           validator: (v) {
-                            if (v == null || v.trim().isEmpty) return 'Email is required';
-                            if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v.trim())) {
-                              return 'Enter a valid email';
+                            if (v == null || v.trim().isEmpty) {
+                              return t.emailRequired;
+                            }
+                            if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
+                                .hasMatch(v.trim())) {
+                              return t.emailInvalid;
                             }
                             return null;
                           },
                         ),
                         const Gap(14),
-
-
                         CustomTextFormField(
                           controller: passwordController,
-                          hint: 'Password',
+                          hint: t.password,
                           icon: Icons.lock_outline_rounded,
+                          obscureText: true,
                           textInputAction: TextInputAction.done,
-                          onFieldSubmitted: (_){
-                              if (!formKey.currentState!.validate())
-                              {};
-                              setState(() => isLoading = true);
-                              try {
-                                 Future.delayed(const Duration(seconds: 1));
-                              } finally {
-                                if (mounted) setState(() => isLoading = false);
-                              }
-                          },
+                          onFieldSubmitted: (_) => _submit(context),
                           validator: (v) {
-                            if (v == null || v.isEmpty) return 'Password is required';
-                            if (v.length < 6) return 'At least 6 characters';
+                            if (v == null || v.isEmpty) return t.passwordRequired;
+                            if (v.length < 6) return t.passwordMin;
                             return null;
                           },
                         ),
                         const Gap(15),
                         CustomButton(
-                          text: 'Sign In',
+                          text: t.signIn,
                           width: double.infinity,
                           height: 50,
                           radius: 30,
@@ -214,44 +185,43 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           )
                               : null,
-                          onTap: isLoading ? null : (){
-                            if(formKey.currentState!.validate()){
-                              context.read<AuthCubit>().login(emailController.text.trim(), passwordController.text.trim());
-                            }
-                          },
+                          onTap: isLoading ? null : () => _submit(context),
                         ),
                         const Gap(14),
                         Row(
                           children: [
-                            const Expanded(child: Divider(color: AppColors.fieldBorder)),
+                            const Expanded(
+                                child: Divider(color: AppColors.fieldBorder)),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              child: CustomText(text: 'or', size: 13, color: AppColors.hintGrey),
+                              padding:
+                              const EdgeInsets.symmetric(horizontal: 12),
+                              child: CustomText(
+                                text: t.or,
+                                size: 13,
+                                color: AppColors.hintGrey,
+                              ),
                             ),
-                            const Expanded(child: Divider(color: AppColors.fieldBorder)),
+                            const Expanded(
+                                child: Divider(color: AppColors.fieldBorder)),
                           ],
                         ),
                         const Gap(14),
                         SocialButton(
-                          label: 'Continue with Google',
+                          label: t.continueWithGoogle,
                           ImagePath: 'assets/Images/Google - Original.png',
-                          onTap: () {
-                            print('Google Button Tapped');
-                            context.read<AuthCubit>().loginWithGoogle();
-                          },
+                          onTap: () => context.read<AuthCubit>().loginWithGoogle(),
                         ),
                         const Gap(12),
                         SocialButton(
-                          label: 'Sign In with Facebook',
-                          onTap: () {}, ImagePath: 'assets/Images/_Facebook.png',
+                          label: t.signInWithFacebook,
+                          onTap: () {},
+                          ImagePath: 'assets/Images/_Facebook.png',
                         ),
                         const Gap(20),
                         GestureDetector(
-                          onTap: () {
-                            navigatorTo(context, ForgetPasswordView());
-                          },
+                          onTap: () => navigatorTo(context, ForgetPasswordView()),
                           child: CustomText(
-                            text: 'Forgot password?',
+                            text: t.forgotPassword,
                             size: 13,
                             color: AppColors.linkBlue,
                             font: FontWeight.w500,
@@ -262,16 +232,15 @@ class _LoginViewState extends State<LoginView> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CustomText(
-                              text: "Don't have an account yet? ",
+                              text: t.noAccountYet,
                               size: 12,
                               color: AppColors.hintGrey,
                             ),
                             GestureDetector(
-                              onTap: () {
-                                navigatorTo(context, CreateAccountView());
-                              },
+                              onTap: () =>
+                                  navigatorTo(context, CreateAccountView()),
                               child: CustomText(
-                                text: 'Sign up',
+                                text: t.signUp,
                                 size: 12,
                                 color: AppColors.linkBlue,
                                 font: FontWeight.w500,
@@ -292,4 +261,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-

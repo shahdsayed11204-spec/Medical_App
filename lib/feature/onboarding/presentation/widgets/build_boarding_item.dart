@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/constant/app_colors.dart';
 import '../../../../core/shared/custom_text/coustom_taxt.dart';
+import '../../../local/locale_cubit.dart';
 import '../view/onboarding_view.dart';
 
 class BuildBoardingItem extends StatelessWidget {
@@ -42,7 +44,9 @@ class BuildBoardingItem extends StatelessWidget {
                     ),
                   ),
                   child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<LocaleCubit>().toggle();
+                    },
                     icon: Icon(
                       Icons.translate_outlined,
                       color: AppColors.secondaryColor,

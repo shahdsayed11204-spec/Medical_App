@@ -7,7 +7,7 @@ import '../../../../core/shared/custom_text/coustom_taxt.dart';
 import '../../../../core/shared/custom_text/custom_bottom.dart';
 import '../../../../core/shared/custom_text/custom_textformfiled.dart';
 import '../../../../core/shared/navigator/navigatorendfinish.dart';
-
+import '../../../local/l10n_ext.dart';
 
 class ResetPasswordView extends StatefulWidget {
   const ResetPasswordView({super.key});
@@ -32,15 +32,14 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
 
   void _reset() {
     if (!_formKey.currentState!.validate()) return;
-    // TODO: call your reset-password API, then land on Login instead of this placeholder.
-    navigatorendfini(
-      context,
-       LoginView( )
-    );
+    // TODO: call your reset-password API, then land on Login.
+    navigatorendfini(context, const LoginView());
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -71,7 +70,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
                 const Gap(8),
                 Text.rich(
-                  TextSpan        (
+                  TextSpan(
                     children: [
                       TextSpan(
                         text: 'Health',
@@ -94,61 +93,67 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
                 const Gap(25),
                 CustomText(
-                  text: 'Create new password',
+                  text: t.createNewPassword,
                   size: 16,
                   font: FontWeight.bold,
                   color: AppColors.titleColor,
                 ),
                 const Gap(6),
                 CustomText(
-                  text: 'Your new password must be different form\npreviously used password',
+                  text: t.newPasswordHint,
                   size: 11,
                   color: AppColors.hintGrey,
                 ),
                 const Gap(24),
                 CustomTextFormField(
                   controller: _passwordController,
-                  hint: 'Password',
+                  hint: t.password,
                   icon: Icons.lock_outline,
                   obscureText: _obscure1,
                   suffix: IconButton(
                     icon: Icon(
-                      _obscure1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscure1
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       size: 18,
                       color: AppColors.hintGrey,
                     ),
                     onPressed: () => setState(() => _obscure1 = !_obscure1),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Password is required';
-                    return v.length < 6 ? 'At least 6 characters' : null;
+                    if (v == null || v.isEmpty) return t.passwordRequired;
+                    return v.length < 6 ? t.passwordMin : null;
                   },
                 ),
                 const Gap(12),
-                    CustomTextFormField(
+                CustomTextFormField(
                   controller: _confirmController,
-                  hint: 'Confirm Password',
+                  hint: t.confirmPassword,
                   icon: Icons.lock_outline,
                   obscureText: _obscure2,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _reset(),
                   suffix: IconButton(
                     icon: Icon(
-                      _obscure2 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscure2
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       size: 18,
                       color: AppColors.hintGrey,
                     ),
                     onPressed: () => setState(() => _obscure2 = !_obscure2),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Please confirm your password';
-                    return v != _passwordController.text ? 'Passwords do not match' : null;
+                    if (v == null || v.isEmpty) return t.confirmPasswordRequired;
+                    return v != _passwordController.text
+                        ? t.passwordsNotMatch
+                        : null;
                   },
                 ),
                 const Gap(24),
                 CustomButton(
                   radius: 30,
-                  text: 'Reset Password',
+                  text: t.resetPassword,
                   width: double.infinity,
                   onTap: _reset,
                 ),

@@ -6,6 +6,7 @@ import '../../../../core/constant/app_colors.dart';
 import '../../../../core/shared/custom_text/custom_bottom.dart';
 import '../../../../core/shared/navigator/navigatorendfinish.dart';
 import '../../../auth/presention/view/login_view.dart';
+import '../../../local/l10n_ext.dart';
 import '../widgets/build_boarding_item.dart';
 
 class OnboardingModel {
@@ -19,23 +20,27 @@ class OnboardingModel {
   });
 }
 
-List<OnboardingModel> boarding = [
-  OnboardingModel(
-    image: 'assets/Images/Image.png',
-    title: 'Meet Doctors Online',
-    body: 'Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.',
-  ),
-  OnboardingModel(
-    image: 'assets/Images/Image (1).png',
-    title: 'Connect with Specialists',
-    body: 'Connect with Specialized Doctors Online for Convenient and Comprehensive Medical Consultations.',
-  ),
-  OnboardingModel(
-    image: 'assets/Images/Image (2).png',
-    title: 'Thousands of Online Specialists',
-    body: 'Explore a Vast Array of Online Medical Specialists, Offering an Extensive Range of Expertise Tailored to Your Healthcare Needs.',
-  ),
-];
+/// Was a global const list; it must be a function now because it needs context.
+List<OnboardingModel> buildBoarding(BuildContext context) {
+  final t = context.l10n;
+  return [
+    OnboardingModel(
+      image: 'assets/Images/Image.png',
+      title: t.onboardingTitle1,
+      body: t.onboardingBody1,
+    ),
+    OnboardingModel(
+      image: 'assets/Images/Image (1).png',
+      title: t.onboardingTitle2,
+      body: t.onboardingBody2,
+    ),
+    OnboardingModel(
+      image: 'assets/Images/Image (2).png',
+      title: t.onboardingTitle3,
+      body: t.onboardingBody3,
+    ),
+  ];
+}
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});
@@ -45,6 +50,7 @@ class OnboardingView extends StatefulWidget {
 }
 
 class _OnboardingViewState extends State<OnboardingView> {
+  static const _pagesCount = 3;
   final boardController = PageController();
   bool isLast = false;
 
@@ -56,6 +62,9 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   @override
   Widget build(BuildContext context) {
+    final boarding = buildBoarding(context);
+    final t = context.l10n;
+
     return Scaffold(
       backgroundColor: const Color(0xffFFFFFF),
       body: SafeArea(
@@ -65,23 +74,19 @@ class _OnboardingViewState extends State<OnboardingView> {
               child: PageView.builder(
                 physics: const BouncingScrollPhysics(),
                 onPageChanged: (int index) {
-                  if (index == boarding.length - 1) {
-                    setState(() => isLast = true);
-                  } else {
-                    setState(() => isLast = false);
-                  }
+                  setState(() => isLast = index == _pagesCount - 1);
                 },
                 controller: boardController,
                 itemBuilder: (context, index) {
                   return BuildBoardingItem(model: boarding[index]);
                 },
-                itemCount: boarding.length,
+                itemCount: _pagesCount,
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: CustomButton(
-                text: isLast ? 'Get Started' : 'Next',
+                text: isLast ? t.getStarted : t.next,
                 onTap: () {
                   if (isLast) {
                     navigatorendfini(context, const LoginView());
@@ -95,10 +100,10 @@ class _OnboardingViewState extends State<OnboardingView> {
                 radius: 30,
               ),
             ),
-            Gap(20),
+            const Gap(20),
             SmoothPageIndicator(
               controller: boardController,
-              count: boarding.length,
+              count: _pagesCount,
               effect: ExpandingDotsEffect(
                 dotColor: AppColors.secondaryColor.withOpacity(0.3),
                 activeDotColor: AppColors.secondaryColor,
@@ -108,19 +113,19 @@ class _OnboardingViewState extends State<OnboardingView> {
                 spacing: 6.0,
               ),
             ),
-            Gap( 12),
+            const Gap(12),
             TextButton(
               onPressed: () {
                 navigatorendfini(context, const LoginView());
               },
-              child:  CustomText(
-                text: 'Skip',
-                color: Color(0xff6B7280),
+              child: CustomText(
+                text: t.skip,
+                color: const Color(0xff6B7280),
                 font: FontWeight.w600,
                 size: 14,
               ),
             ),
-             Gap( 12),
+            const Gap(12),
           ],
         ),
       ),

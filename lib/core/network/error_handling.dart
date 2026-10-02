@@ -4,48 +4,46 @@ import 'failures.dart';
 
 class ErrorHandling {
   static Failures handleError(DioException error) {
-    switch (error.type){
+    switch (error.type) {
       case DioExceptionType.connectionError:
-      return NetworkFailure();
+        return const NetworkFailure();
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return ServerFailure(message: "Time out , Try again");
+        return const ServerFailure(message: 'timeout');
       case DioExceptionType.badResponse:
-        throw handleBadResponse(error);
+        return handleBadResponse(error);
       case DioExceptionType.cancel:
-        return ServerFailure(message: "Canceled");
+        return const ServerFailure(message: 'canceled');
       case DioExceptionType.badCertificate:
-        throw UnimplementedError();
       case DioExceptionType.unknown:
-        throw UnimplementedError();
       case DioExceptionType.transformTimeout:
-        throw UnimplementedError();
+        return const UnExpectedFailure();
     }
   }
 
-  static Failures handleBadResponse(DioException error){
+  static Failures handleBadResponse(DioException error) {
     final statusCode = error.response?.statusCode;
     final data = error.response?.data;
-    switch (statusCode){
+    switch (statusCode) {
       case 400:
-        return ServerFailure(message: data?['message'] ?? 'Bad Request');
+        return ServerFailure(
+          message: data is Map ? (data['message']?.toString() ?? 'bad-request') : 'bad-request',
+          statusCode: 400,
+        );
       case 401:
-        return UnauthorizedFailure();
+        return const UnauthorizedFailure();
       case 403:
-        return ServerFailure(message: 'Forbidden request. ');
-
+        return const ServerFailure(message: 'forbidden', statusCode: 403);
       case 404:
-        return NotFoundFailure();
-
+        return const NotFoundFailure();
       case 500:
-        return ServerFailure(message: 'Server error. Try again later.');
-
+        return const ServerFailure(message: 'server', statusCode: 500);
       default:
         return ServerFailure(
-          message: data?['message'] ?? 'Unexpected error occurred',
+          message: data is Map ? (data['message']?.toString() ?? 'unexpected') : 'unexpected',
+          statusCode: statusCode,
         );
     }
   }
-
 }

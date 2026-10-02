@@ -8,7 +8,7 @@ import '../../../../core/shared/custom_text/coustom_taxt.dart';
 import '../../../../core/shared/custom_text/custom_bottom.dart';
 import '../../../../core/shared/custom_text/custom_snackbar.dart';
 import '../../../../core/shared/navigator/navigatorTo.dart';
-
+import '../../../local/l10n_ext.dart';
 
 const _otpLength = 5;
 
@@ -53,7 +53,7 @@ class _VerifyCodeViewState extends State<VerifyCodeView> {
   void _verify() {
     if (_code.length < _otpLength) {
       ScaffoldMessenger.of(context).showSnackBar(
-        customSnack(errorMsg: 'Enter the full code', color: Colors.redAccent),
+        customSnack(errorMsg: context.l10n.enterFullCode, color: Colors.redAccent),
       );
       return;
     }
@@ -64,12 +64,17 @@ class _VerifyCodeViewState extends State<VerifyCodeView> {
   void _resend() {
     // TODO: call your resend-code API with widget.email.
     ScaffoldMessenger.of(context).showSnackBar(
-      customSnack(errorMsg: 'Code resent to ${widget.email}', color: AppColors.secondaryColor),
+      customSnack(
+        errorMsg: context.l10n.codeResentTo(widget.email),
+        color: AppColors.secondaryColor,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -98,7 +103,7 @@ class _VerifyCodeViewState extends State<VerifyCodeView> {
               ),
               const Gap(8),
               Text.rich(
-                TextSpan (
+                TextSpan(
                   children: [
                     TextSpan(
                       text: 'Health',
@@ -121,59 +126,67 @@ class _VerifyCodeViewState extends State<VerifyCodeView> {
               ),
               const Gap(32),
               CustomText(
-                text: 'Verify Code',
+                text: t.verifyCodeTitle,
                 size: 20,
                 font: FontWeight.bold,
                 color: AppColors.titleColor,
               ),
               const Gap(6),
               CustomText(
-                text: 'Enter the the code\nwe just sent you on your registered Email',
+                text: t.verifyCodeSubtitle,
                 size: 14,
                 color: AppColors.hintGrey,
               ),
               const Gap(24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(_otpLength, (i) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: i == _otpLength - 1 ? 0 : 10),
-                    child: SizedBox(
-                      width: 50,
-                      height: 48,
-                      child: TextField(
-                        controller: _controllers[i],
-                        focusNode: _focusNodes[i],
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        maxLength: 1,
-                        cursorColor: AppColors.secondaryColor,
-                        style: const TextStyle(fontSize: 16, color: AppColors.titleColor),
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        decoration: InputDecoration(
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.fieldFill,
-                          contentPadding: EdgeInsets.zero,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: AppColors.fieldBorder),
+              // Code boxes stay left-to-right even in Arabic (digits are LTR).
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_otpLength, (i) {
+                    return Padding(
+                      padding:
+                      EdgeInsets.only(right: i == _otpLength - 1 ? 0 : 10),
+                      child: SizedBox(
+                        width: 50,
+                        height: 48,
+                        child: TextField(
+                          controller: _controllers[i],
+                          focusNode: _focusNodes[i],
+                          textAlign: TextAlign.center,
+                          keyboardType: TextInputType.number,
+                          maxLength: 1,
+                          cursorColor: AppColors.secondaryColor,
+                          style: const TextStyle(
+                              fontSize: 16, color: AppColors.titleColor),
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          decoration: InputDecoration(
+                            counterText: '',
+                            filled: true,
+                            fillColor: AppColors.fieldFill,
+                            contentPadding: EdgeInsets.zero,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide:
+                              const BorderSide(color: AppColors.fieldBorder),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(
+                                  color: AppColors.secondaryColor),
+                            ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: AppColors.secondaryColor),
-                          ),
+                          onChanged: (v) => _onChanged(i, v),
                         ),
-                        onChanged: (v) => _onChanged(i, v),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
               const Gap(24),
               CustomButton(
                 radius: 30,
-                text: 'Verify',
+                text: t.verify,
                 width: double.infinity,
                 onTap: _verify,
               ),
@@ -182,14 +195,14 @@ class _VerifyCodeViewState extends State<VerifyCodeView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CustomText(
-                    text: "Didn't get the Code? ",
+                    text: t.didntGetCode,
                     size: 12,
                     color: AppColors.hintGrey,
                   ),
                   GestureDetector(
                     onTap: _resend,
                     child: CustomText(
-                      text: 'Resend',
+                      text: t.resend,
                       size: 13,
                       font: FontWeight.w600,
                       color: AppColors.linkBlue,

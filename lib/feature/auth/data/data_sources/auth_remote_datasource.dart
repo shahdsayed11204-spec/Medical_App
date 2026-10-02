@@ -74,7 +74,7 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   Future<UserModel> loginWithGoogle() async {
     final googleUser = await GoogleSignIn().signIn();
     if (googleUser == null) {
-      throw Exception('تم إلغاء تسجيل الدخول بجوجل');
+      throw Exception('google-cancelled');
     }
 
     final googleAuth = await googleUser.authentication;
@@ -106,7 +106,7 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   Future<UserModel> getCurrentUser() async {
     final currentUser = auth.currentUser;
     if (currentUser == null) {
-      throw Exception('لا يوجد مستخدم مسجل دخول حاليًا');
+      throw Exception('no-user');
     }
 
     final docRef = fireStore.collection('users').doc(currentUser.uid);
@@ -168,7 +168,7 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   }) async {
     final currentUser = auth.currentUser;
     if (currentUser == null) {
-      throw Exception('لا يوجد مستخدم مسجل دخول حاليًا');
+      throw Exception('no-user');
     }
     final trimmedName = name.trim();
     await currentUser.updateDisplayName(trimmedName);
@@ -187,7 +187,7 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   Future<void> changePassword({required String currentPassword, required String newPassword}) async {
     final currentUser = auth.currentUser;
     if (currentUser == null || currentUser.email == null) {
-      throw Exception('لا يوجد مستخدم مسجل دخول حاليًا');
+      throw Exception('no-user');
     }
     final credential = EmailAuthProvider.credential(
       email: currentUser.email!,
@@ -201,7 +201,7 @@ class AuthRemoteDatasourceImp extends AuthRemoteDatasource {
   Future<String> uploadProfilePhoto(File file) async {
     final currentUser = auth.currentUser;
     if (currentUser == null) {
-      throw Exception('لا يوجد مستخدم مسجل دخول حاليًا');
+      throw Exception('no-user');
     }
     final ref = storage.ref().child('users/${currentUser.uid}/profile.jpg');
 

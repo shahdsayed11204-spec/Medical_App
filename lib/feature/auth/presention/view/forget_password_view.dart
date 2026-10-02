@@ -7,7 +7,7 @@ import '../../../../core/shared/custom_text/coustom_taxt.dart';
 import '../../../../core/shared/custom_text/custom_bottom.dart';
 import '../../../../core/shared/custom_text/custom_textformfiled.dart';
 import '../../../../core/shared/navigator/navigatorTo.dart';
-
+import '../../../local/l10n_ext.dart';
 
 class ForgetPasswordView extends StatefulWidget {
   const ForgetPasswordView({super.key});
@@ -33,6 +33,8 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -51,7 +53,7 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
             key: _formKey,
             child: Column(
               children: [
-                const Gap(30 ),
+                const Gap(30),
                 Image.asset(
                   'assets/Images/Vector.png',
                   height: 64,
@@ -67,11 +69,19 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                     children: [
                       TextSpan(
                         text: 'Health',
-                        style: TextStyle(fontWeight: FontWeight.w300, color: AppColors.secondaryColor,fontSize: 20),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.secondaryColor,
+                          fontSize: 20,
+                        ),
                       ),
                       TextSpan(
                         text: 'Pal',
-                        style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.secondaryColor,fontSize: 20),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.secondaryColor,
+                          fontSize: 20,
+                        ),
                       ),
                     ],
                   ),
@@ -80,36 +90,37 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                 ),
                 const Gap(32),
                 CustomText(
-                  text: 'Forget Password?',
+                  text: t.forgetPasswordTitle,
                   size: 20,
                   font: FontWeight.bold,
                   color: AppColors.titleColor,
                 ),
                 const Gap(6),
                 CustomText(
-                  text: 'Enter your Email, we will send you a verification code.',
+                  text: t.forgetPasswordSubtitle,
                   size: 14,
                   color: AppColors.hintGrey,
                 ),
                 const Gap(26),
                 CustomTextFormField(
                   controller: _emailController,
-                  hint: 'Your Email',
+                  hint: t.yourEmail,
                   icon: Icons.mail_outline,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _sendCode(),
                   validator: (v) {
                     final value = v?.trim() ?? '';
-                    if (value.isEmpty) return 'Email is required';
-                    final ok = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
-                    return ok ? null : 'Enter a valid email';
+                    if (value.isEmpty) return t.emailRequired;
+                    final ok =
+                    RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(value);
+                    return ok ? null : t.emailInvalid;
                   },
                 ),
                 const Gap(30),
                 CustomButton(
                   radius: 30,
-                  text: 'Send Code',
+                  text: t.sendCode,
                   width: double.infinity,
                   onTap: _sendCode,
                 ),

@@ -3,8 +3,8 @@ import 'package:gap/gap.dart';
 
 import '../../../../core/constant/app_colors.dart';
 import '../../../../core/shared/custom_text/coustom_taxt.dart';
+import '../../../local/l10n_ext.dart';
 
-/// Shows the dialog, waits [delay], then calls [onDone] (e.g. go to Home).
 Future<void> showCongratsDialog(
     BuildContext context, {
       required VoidCallback onDone,
@@ -26,6 +26,8 @@ class CongratsDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.l10n;
+
     return PopScope(
       canPop: false, // block back button while redirecting
       child: Dialog(
@@ -54,15 +56,14 @@ class CongratsDialog extends StatelessWidget {
               ),
               const Gap(20),
               CustomText(
-                text: 'Congratulations!',
+                text: t.congratulations,
                 size: 14,
                 font: FontWeight.bold,
                 color: AppColors.titleColor,
               ),
               const Gap(8),
               CustomText(
-                text:
-                'Your account is ready to use. You will be redirected to the Home Page in a few seconds..',
+                text: t.accountReady,
                 size: 10,
                 color: AppColors.hintGrey,
               ),
