@@ -5,7 +5,7 @@ import 'package:medicalapp/feature/root/cubit/root_state.dart';
 import '../../appointment/presentation/view/appointment_view.dart';
 import '../../auth/presention/view/profile_view.dart';
 import '../../home/presentation/view/home_view.dart';
-import '../../search/presentation/view/search_view.dart';
+import '../../nearby/presentation/view/nearby_view.dart';
 
 
 class RootCubit extends Cubit<RootStates> {
@@ -15,7 +15,7 @@ class RootCubit extends Cubit<RootStates> {
 
   final List<Widget> screen = [
     HomeView(),
-    SearchView(),
+    NearbyView(),
     AppointmentView(),
     ProfileView(),
   ];

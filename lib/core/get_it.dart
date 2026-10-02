@@ -16,6 +16,11 @@ import '../feature/auth/domain/use_case/update_profile_usecase.dart';
 import '../feature/auth/domain/use_case/upload_profile_photo_usecase.dart';
 import '../feature/auth/presention/cubit/auth_cubit.dart';
 import '../feature/auth/presention/cubit/profile_cubit.dart';
+import '../feature/home/data/home_datasource/home_remote_datasource.dart';
+import '../feature/home/data/repo_impl/home_repo_impl.dart';
+import '../feature/home/domain/repoi/home_repo.dart';
+import '../feature/home/domain/use_case/get_clinics_usecase.dart';
+import '../feature/home/presentation/cubit/home_cubit.dart';
 
 final getIt= GetIt.instance;
 
@@ -52,4 +57,8 @@ Future<void>setup()async{
   getIt.registerFactory(() => AuthCubit(getIt(), getIt(), getIt()));
 
   getIt.registerFactory(() => ProfileCubit(getIt()));
+  getIt.registerLazySingleton<HomeRemoteDatasource>(() => HomeRemoteDatasourceImp(getIt()));
+  getIt.registerLazySingleton<HomeRepo>(() => HomeRepoImpl(getIt()));
+  getIt.registerLazySingleton<GetClinicsUseCase>(() => GetClinicsUseCase(getIt()));
+  getIt.registerFactory(() => HomeCubit(getIt()));
 }

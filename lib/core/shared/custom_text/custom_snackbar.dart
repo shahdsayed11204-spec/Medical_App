@@ -24,11 +24,13 @@ SnackBar customSnack({required String errorMsg,Color?color,IconData? icon}) {
           icon ?? CupertinoIcons.info_circle,color: Colors.white,size: 12,
         ),
         const Gap(10),
-        CustomText(
-          text: errorMsg,
-          size: 11,
-          font: FontWeight.bold,
-          color: Colors.white,
+        Expanded(
+          child: CustomText(
+            text: errorMsg,
+            size: 11,
+            font: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ],
     ),
